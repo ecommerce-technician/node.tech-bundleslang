@@ -15,24 +15,20 @@ app.get('/', function(request, response){
 
 app.get('/api/v1/twitter/count-mentions/:mentions', function(request, response){
 
-	var twitterKey = new Buffer(encodeURIComponent('XXXXXXXXXXX') + ':' + encodeURIComponent('XXXXXXXXXX')).toString('base64');
-	console.log(twitterKey);
-	var options = {
-  		host: 'https://api.twitter.com',
-  		path: '/oauth2/token',
-  		method: 'POST',
-  		headers: {
-  			'Authorization' : 'Basic ' + twitterKey, 
-  			'Content-Type' : 'application/x-www-form-urlencoded;charset=UTF-8'
-  		},
-  		body: 'grant_type=client_credentials'
-	};
-
-	https.get(options, function(res) {
-	  console.log("Got response: " + res.statusCode);
-	}).on('error', function(e) {
-	  console.log("Got error: " + e.message);
-	});
+	var Twitter = require('twitter');
+ 
+var client = new Twitter({
+  consumer_key: 'SCGiI36qKuzOubIT8LtSNDbJq',
+  consumer_secret: 'XGUCOopoIsgr432qqWIPihABlf9vHmmm77iwcoUxHbkORFIKgZ',
+  access_token_key: '3165869263-MWZFHU2K7KPyh3armcu22q3OWdPz9BUdNQnK5zs',
+  access_token_secret: 'yNl7T6mBhKhmlha34KKZ4zDyEBsxtJI1RqYlcfHP8OCKi'
+});
+ 
+client.post('statuses/update', {status: 'Hello World - testing bundleslang! #nodejs'},  function(error, tweet, response){
+  if(error) throw error;
+  console.log(tweet);  // Tweet body. 
+  console.log(response);  // Raw response object. 
+});
 
 	//response.send(resp.statusCode);
 	response.end();
