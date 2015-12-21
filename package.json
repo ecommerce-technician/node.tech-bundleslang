@@ -1,0 +1,27 @@
+{
+  "name": "node.tech-bundleslang",
+  "version": "1.0.0",
+  "description": "a messaging server to handle social media queries",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecommerce-technician/node.tech-bundleslang.git"
+  },
+  "keywords": [
+    "nodejs"
+  ],
+  "author": "alex wood",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ecommerce-technician/node.tech-bundleslang/issues"
+  },
+  "homepage": "https://github.com/ecommerce-technician/node.tech-bundleslang#readme",
+  "dependencies": {
+    "express": "^4.13.3",
+    "https": "^1.0.0",
+    "http": "^1.0.0"
+  }
+}
