@@ -13,26 +13,22 @@ app.get('/', function(request, response){
 	response.sendFile(__dirname + '/public/index.html');
 }); 
 
-app.get('/api/v1/twitter/count-mentions/:mentions', function(request, response){
+app.get('/api/v1/twitter/post/statuses/update/:status', function(request, response){
 
-	var twitterKey = new Buffer(encodeURIComponent('XXXXXXXXXXX') + ':' + encodeURIComponent('XXXXXXXXXX')).toString('base64');
-	console.log(twitterKey);
-	var options = {
-  		host: 'https://api.twitter.com',
-  		path: '/oauth2/token',
-  		method: 'POST',
-  		headers: {
-  			'Authorization' : 'Basic ' + twitterKey, 
-  			'Content-Type' : 'application/x-www-form-urlencoded;charset=UTF-8'
-  		},
-  		body: 'grant_type=client_credentials'
-	};
-
-	https.get(options, function(res) {
-	  console.log("Got response: " + res.statusCode);
-	}).on('error', function(e) {
-	  console.log("Got error: " + e.message);
-	});
+	var Twitter = require('twitter');
+ 
+var client = new Twitter({
+  consumer_key: 'XXX',
+  consumer_secret: 'XXX',
+  access_token_key: 'XXX',
+  access_token_secret: 'XXX'
+});
+ 
+client.post('statuses/update', {status: request.params.status},  function(error, tweet, response){
+  if(error) throw error;
+  console.log(tweet);  // Tweet body. 
+  console.log(response);  // Raw response object. 
+});
 
 	//response.send(resp.statusCode);
 	response.end();
