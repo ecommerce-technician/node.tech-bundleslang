@@ -3,14 +3,16 @@ var http = require("http");
 var https = require("https");
 var Twitter = require('twitter');
 var fetch = require('node-fetch');
+var env = require('./env.js');
+
 var app = express();
 
 
 var twitterClient = new Twitter({
-  consumer_key: 'xfkjzRkTIKc33Z0l6KWySl56U',
-  consumer_secret: 'JuOetPqYVC929L9O42erKfX0aF6Dqb9ph1pJ9P684duiVn4CB8',
-  access_token_key: '3165869263-MWZFHU2K7KPyh3armcu22q3OWdPz9BUdNQnK5zs',
-  access_token_secret: 'yNl7T6mBhKhmlha34KKZ4zDyEBsxtJI1RqYlcfHP8OCKi'
+  consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 });
 
 app.use(express.static('public')); //todo nginx in production
@@ -24,7 +26,6 @@ app.get('/', function(request, response){
 }); 
 
 app.get('/api/v1/twitter/post/statuses/update/:status', function(request, response){
- 
 	twitterClient.post('statuses/update', {status: request.params.status},  function(error, tweet, response){
 	  if(error) throw error;
 	  console.log(tweet);  // Tweet body. 
