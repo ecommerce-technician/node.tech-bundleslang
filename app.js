@@ -2,6 +2,8 @@ var express = require('express');
 var http = require("http");
 var https = require("https");
 var Twitter = require('twitter');
+var GoogleNews, googleNews, track;
+var GoogleNews = require('google-news')
 var fetch = require('node-fetch');
 var env = require('./env.js');
 
@@ -69,13 +71,32 @@ app.get('/api/v1/reddit/search/:search', function(request, response){
 
 app.get('/api/v1/markit/search/:search', function(request, response){
 
-    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=AAPL')
+    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=' + request.params.search)
         .then(function(res) {
             console.log(res);
             return res.json();
         }).then(function(json) {
             console.log(json);
         });
+
+    //response.send(resp.statusCode);
+    response.end();
+});
+
+app.get('/api/v1/google-news/search/:search', function(request, response){
+    googleNews = new GoogleNews();
+
+
+    googleNews.stream(request.params.search, function(stream) {
+
+        stream.on(GoogleNews.DATA, function(data) {
+            return console.log('Data Event received... ' + data.title);
+        });
+
+        stream.on(GoogleNews.ERROR, function(error) {
+            return console.log('Error Event received... ' + error);
+        });
+    });
 
     //response.send(resp.statusCode);
     response.end();
