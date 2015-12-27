@@ -67,6 +67,20 @@ app.get('/api/v1/reddit/search/:search', function(request, response){
     response.end();
 });
 
+app.get('/api/v1/markit/search/:search', function(request, response){
+
+    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=AAPL')
+        .then(function(res) {
+            console.log(res);
+            return res.json();
+        }).then(function(json) {
+            console.log(json);
+        });
+
+    //response.send(resp.statusCode);
+    response.end();
+});
+
 app.listen(1337, function(){
 	console.log('listening on port 1337');	
 });
