@@ -11,4 +11,8 @@ Consume these endpoints using get requests to query twitter and reddit apis
  
 ### Reddit
  - Search for a mention ```/api/v1/reddit/search/:search```
+ - 
+ 
+### Markit
+ - Search by Ticker ```/api/v1/markit/search/:search```
 
