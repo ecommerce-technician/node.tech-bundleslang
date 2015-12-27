@@ -16,6 +16,6 @@ Consume these endpoints using get requests to query twitter and reddit apis
  - Search by Ticker ```/api/v1/markit/search/:search```
 
 ### Google News
- - Streaming news by Search Term /api/v1/google-news/search/:search
+ - Streaming news by Search Term ```/api/v1/google-news/search/:search```
 
 
