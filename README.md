@@ -13,7 +13,8 @@ Consume these endpoints using get requests to query twitter and reddit apis
  - Search for a mention ```/api/v1/reddit/search/:search```
  
 ### Markit
- - Search by Ticker ```/api/v1/markit/search/:search```
+ - Search for company data by Ticker ```/api/v1/markit/search/:search```
+ - Get stock quotes by Ticker ```/api/v1/markit/search/quote/:ticker```
 
 ### Google News
  - Streaming news by Search Term ```/api/v1/google-news/search/:search```
