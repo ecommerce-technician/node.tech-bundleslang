@@ -83,6 +83,20 @@ app.get('/api/v1/markit/search/:search', function(request, response){
     response.end();
 });
 
+app.get('/api/v1/markit/search/quote/:ticker', function(request, response){
+
+    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=' + request.params.ticker)
+        .then(function(res) {
+            console.log(res);
+            return res.json();
+        }).then(function(json) {
+            console.log(json);
+        });
+
+    //response.send(resp.statusCode);
+    response.end();
+});
+
 app.get('/api/v1/google-news/search/:search', function(request, response){
     googleNews = new GoogleNews();
 
@@ -102,6 +116,6 @@ app.get('/api/v1/google-news/search/:search', function(request, response){
     response.end();
 });
 
-app.listen(1337, function(){
-	console.log('listening on port 1337');	
+app.listen(7777, function(){
+	console.log('listening on port 7777');
 });
