@@ -6,86 +6,74 @@ var GoogleNews, googleNews, track;
 var GoogleNews = require('google-news')
 var fetch = require('node-fetch');
 var env = require('./env.js');
+var fs = require('fs');
 
 var app = express();
 
 
 var twitterClient = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+    consumer_key: "xfkjzRkTIKc33Z0l6KWySl56U",
+    consumer_secret: "JuOetPqYVC929L9O42erKfX0aF6Dqb9ph1pJ9P684duiVn4CB8",
+    access_token_key: "3165869263-MWZFHU2K7KPyh3armcu22q3OWdPz9BUdNQnK5zs",
+    access_token_secret: "yNl7T6mBhKhmlha34KKZ4zDyEBsxtJI1RqYlcfHP8OCKi"
 });
 
 app.use(express.static('public')); //todo nginx in production
-app.use(function(request, response, next) {
-	next();
+app.use(function(req, res, next) {
+    next();
 });
 
-app.get('/', function(request, response){
-	//loads index file + angular app
-	response.sendFile(__dirname + '/public/index.html');
-}); 
-
-app.get('/api/v1/twitter/post/statuses/update/:status', function(request, response){
-	twitterClient.post('statuses/update', {status: request.params.status},  function(error, tweet, response){
-	  if(error) throw error;
-	  console.log(tweet);  // Tweet body. 
-	  console.log(response);  // Raw response object.
-	});
-
-	//response.send(resp.statusCode);
-	response.end();
+app.get('/', function(req, res){
+    //loads index file + angular app
+    res.sendFile(__dirname + '/public/index.html');
 });
 
-app.get('/api/v1/twitter/search/:search', function(request, response){
-	twitterClient.get('search/tweets', {q:request.params.search,result_type:'recent',count:99,lang:'en'}, function(error, tweets, response){
-   		console.log(tweets);
-	});
+app.get('/api/v1/twitter/post/statuses/update/:status', function(req, res){
+    twitterClient.post('statuses/update', {status: req.params.status},  function(error, tweet, res){
+        if(error) throw error;
+        console.log(tweet);  // Tweet body.
+        console.log(res);  // Raw res object.
+    });
 
-	//response.send(resp.statusCode);
-	response.end();
+    //res.send(resp.statusCode);
+    res.end();
 });
 
-app.get('/api/v1/twitter/mentions', function(request, response){
-	twitterClient.get('statuses/mentions_timeline', {result_type:'recent'}, function(error, tweets, response){
-   		console.log(tweets);
-	});
+app.get('/api/v1/twitter/search/:search', function(req, res){
+    twitterClient.get('search/tweets', {q:req.params.search,result_type:'recent',count:99,lang:'en'}, function(error, tweets, res){
+        shipIt(tweets)
+    });
 
-	//response.send(resp.statusCode);
-	response.end();
+    function shipIt(tweets) {
+        res.send(tweets);
+    }
 });
 
-app.get('/api/v1/reddit/search/:search', function(request, response){
+app.get('/api/v1/twitter/mentions', function(req, res){
+    twitterClient.get('statuses/mentions_timeline', {result_type:'recent'}, function(error, tweets, res){
+        console.log(tweets.statuses);
+    });
 
-    fetch('https://www.reddit.com/search.json?q='+ request.params.search +'&sort=new')
+    //res.send(resp.statusCode);
+    res.end();
+});
+
+app.get('/api/v1/reddit/search/:search', function(req, res){
+
+    fetch('https://www.reddit.com/search.json?q='+ req.params.search +'&sort=new')
         .then(function(res) {
             return res.json();
         }).then(function(json) {
             console.log(json);
         });
 
-    //response.send(resp.statusCode);
-    response.end();
+    //res.send(resp.statusCode);
+    res.end();
 });
 
-app.get('/api/v1/markit/search/:search', function(request, response){
+app.get('/api/v1/markit/search/:search', function(req, res){
 
-    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=' + request.params.search)
-        .then(function(res) {
-            console.log(res);
-            return res.json();
-        }).then(function(json) {
-            console.log(json);
-        });
-
-    //response.send(resp.statusCode);
-    response.end();
-});
-
-app.get('/api/v1/markit/search/quote/:ticker', function(request, response){
-
-    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=' + request.params.ticker)
+    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Lookup/jsonp?input=' + req.params.search)
         .then(function(res) {
             console.log(res);
             return res.json();
@@ -93,13 +81,13 @@ app.get('/api/v1/markit/search/quote/:ticker', function(request, response){
             console.log(json);
         });
 
-    //response.send(resp.statusCode);
-    response.end();
+    //res.send(resp.statusCode);
+    res.end();
 });
 
-app.get('/api/v1/markit/search/interactive/:ticker', function(request, response){
+app.get('/api/v1/markit/search/quote/:ticker', function(req, res){
 
-    fetch('http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=%7B%22Normalized%22%3Afalse%2C%22NumberOfDays%22%3A365%2C%22DataPeriod%22%3A%22Day%22%2C%22Elements%22%3A%5B%7B%22Symbol%22%3A%22' + request.params.ticker + '%22%2C%22Type%22%3A%22price%22%2C%22Params%22%3A%5B%22c%22%5D%7D%5D%7D')
+    fetch('http://dev.markitondemand.com/MODApis/Api/v2/Quote/jsonp?symbol=' + req.params.ticker)
         .then(function(res) {
             console.log(res);
             return res.json();
@@ -107,15 +95,29 @@ app.get('/api/v1/markit/search/interactive/:ticker', function(request, response)
             console.log(json);
         });
 
-    //response.send(resp.statusCode);
-    response.end();
+    //res.send(resp.statusCode);
+    res.end();
 });
 
-app.get('/api/v1/google-news/search/:search', function(request, response){
+app.get('/api/v1/markit/search/interactive/:ticker', function(req, res){
+
+    fetch('http://dev.markitondemand.com/MODApis/Api/v2/InteractiveChart/json?parameters=%7B%22Normalized%22%3Afalse%2C%22NumberOfDays%22%3A365%2C%22DataPeriod%22%3A%22Day%22%2C%22Elements%22%3A%5B%7B%22Symbol%22%3A%22' + req.params.ticker + '%22%2C%22Type%22%3A%22price%22%2C%22Params%22%3A%5B%22c%22%5D%7D%5D%7D')
+        .then(function(res) {
+            console.log(res);
+            return res.json();
+        }).then(function(json) {
+            console.log(json);
+        });
+
+    //res.send(resp.statusCode);
+    res.end();
+});
+
+app.get('/api/v1/google-news/search/:search', function(req, res){
     googleNews = new GoogleNews();
 
 
-    googleNews.stream(request.params.search, function(stream) {
+    googleNews.stream(req.params.search, function(stream) {
 
         stream.on(GoogleNews.DATA, function(data) {
             return console.log('Data Event received... ' + data.title);
@@ -126,10 +128,10 @@ app.get('/api/v1/google-news/search/:search', function(request, response){
         });
     });
 
-    //response.send(resp.statusCode);
-    response.end();
+    //res.send(resp.statusCode);
+    res.end();
 });
 
 app.listen(7777, function(){
-	console.log('listening on port 7777');
+    console.log('listening on port 7777');
 });
