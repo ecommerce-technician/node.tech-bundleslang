@@ -3,3 +3,4 @@ bower_components/
 .idea/
 testDB.json
 env.js
+tmp/
