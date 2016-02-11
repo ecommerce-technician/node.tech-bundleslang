@@ -1,6 +1,7 @@
 var express = require('express');
 var http = require("http");
 var https = require("https");
+var request = require('request');
 var Twitter = require('twitter');
 var GoogleNews, googleNews, track;
 var GoogleNews = require('google-news')
@@ -12,10 +13,10 @@ var app = express();
 
 
 var twitterClient = new Twitter({
-    consumer_key: "xfkjzRkTIKc33Z0l6KWySl56U",
-    consumer_secret: "JuOetPqYVC929L9O42erKfX0aF6Dqb9ph1pJ9P684duiVn4CB8",
-    access_token_key: "3165869263-MWZFHU2K7KPyh3armcu22q3OWdPz9BUdNQnK5zs",
-    access_token_secret: "yNl7T6mBhKhmlha34KKZ4zDyEBsxtJI1RqYlcfHP8OCKi"
+    consumer_key: consumer_key,
+    consumer_secret: consumer_secret,
+    access_token_key: access_token_key,
+    access_token_secret: access_token_secret
 });
 
 app.use(express.static('public')); //todo nginx in production
@@ -49,13 +50,34 @@ app.get('/api/v1/twitter/search/:search', function(req, res){
     }
 });
 
+app.get('/api/v1/twitter/count/:search', function(req, res){
+    twitterClient.get('search/tweets', {q:req.params.search,result_type:'recent',count:99,lang:'en'}, function(error, tweets, res){
+        var count = [];
+        for (i = 0; i < tweets.statuses.length; i++) {
+            count.push({
+                headline: "Retweeted " + tweets.statuses[i].retweet_count,
+                description: tweets.statuses[i].text,
+                url: $sce.trustAsHtml(tweets.statuses[i].source),
+                time: tweets.statuses[i].created_at
+            });
+        }
+        shipIt(count.length)
+    });
+
+    function shipIt(count) {
+        res.send(count);
+    }
+});
+
 app.get('/api/v1/twitter/mentions', function(req, res){
     twitterClient.get('statuses/mentions_timeline', {result_type:'recent'}, function(error, tweets, res){
-        console.log(tweets.statuses);
+        shipIt(tweets);
     });
 
     //res.send(resp.statusCode);
-    res.end();
+    function shipIt(tweets) {
+        res.send(tweets);
+    }
 });
 
 app.get('/api/v1/reddit/search/:search', function(req, res){
@@ -130,6 +152,13 @@ app.get('/api/v1/google-news/search/:search', function(req, res){
 
     //res.send(resp.statusCode);
     res.end();
+});
+
+app.get('/api/v1/politics/lobbyingdisclosure/state/:search', function(req, res){
+
+    var url = 'https://api.enigma.io/v2/data/b3c7ce1c0cd6bf220a99c7390de60e61/us.gov.senate.lobbyingdisclosure.org.2006?search[]=(%22'+ req.params.search +'%22)&conjunction=and';
+    request(url).pipe(res);
+
 });
 
 app.listen(7777, function(){
