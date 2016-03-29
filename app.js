@@ -72,6 +72,11 @@ app.get('/api/v1/google-news/search/:search', function(req, res){
     request(url).pipe(res);
 });
 
+//Pagespeed
+app.get('/api/v1/pagespeed/search/:search', function(req, res){
+    var url='https://www.googleapis.com/pagespeedonline/v2/runPagespeed?url=http://' '&key=XXXXXXXX';
+    request(url).pipe(res);
+});
 
 app.listen(7777, function(){
     console.log('listening on port 7777');

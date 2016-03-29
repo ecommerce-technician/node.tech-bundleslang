@@ -1,0 +1,39 @@
+var express = require('express');
+var http = require("http");
+var https = require("https");
+var request = require('request');
+var Twitter = require('twitter');
+//var env = require('./env.js');
+var fs = require('fs');
+
+var app = express();
+
+
+
+app.use(express.static('public')); //todo nginx in production
+
+app.use(function(req, res, next) {
+    next();
+});
+
+app.get('/', function(req, res){
+    //loads index file + angular app
+    res.sendFile(__dirname + '/public/index.html');
+});
+
+
+//Reddit
+app.get('/api/v1/google-news/search/:search', function(req, res){
+    var url='http://www.reddit.com/search.json?q=' + req.params.search + 'ferrari&sort=new';
+    request(url).pipe(res);
+});
+
+//Pagespeed
+app.get('/api/v1/pagespeed/search/:search', function(req, res){
+    var url='https://www.googleapis.com/pagespeedonline/v2/runPagespeed?url=http://' + req.params.search +'&key=AIzaSyDVqAOfmeJJsgDQqERAmodrAbnp1XVnv88';
+    request(url).pipe(res);
+});
+
+app.listen(7777, function(){
+    console.log('listening on port 7777');
+});
