@@ -19,5 +19,8 @@ Consume these endpoints using get requests to query twitter and reddit apis
 
 ### Google News
  - Streaming news by Search Term ```/api/v1/google-news/search/:search```
+ - 
+### Google Pagespeed Insights
+ - Get performance insights on a webpage ```/api/v1/pagespeed/search/:search```
 
 
