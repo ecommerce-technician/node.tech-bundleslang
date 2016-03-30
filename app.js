@@ -3,7 +3,7 @@ var http = require("http");
 var https = require("https");
 var request = require('request');
 var Twitter = require('twitter');
-var env = require('./env.js');
+var env = require('./env.json');
 var fs = require('fs');
 
 var app = express();
@@ -74,9 +74,22 @@ app.get('/api/v1/google-news/search/:search', function(req, res){
 
 //Pagespeed
 app.get('/api/v1/pagespeed/search/:search', function(req, res){
-    var url='https://www.googleapis.com/pagespeedonline/v2/runPagespeed?url=http://' '&key=XXXXXXXX';
+    var url='https://www.googleapis.com/pagespeedonline/v2/runPagespeed?url=http://'+ req.params.search +'&key=AIzaSyDVqAOfmeJJsgDQqERAmodrAbnp1XVnv88' ;
     request(url).pipe(res);
 });
+
+//Scrape HTTP
+app.get('/api/v1/scrape/http/:search', function(req, res){
+    var url='http://'+ req.params.search;
+    request(url).pipe(res);
+});
+
+//Scrape HTTPS
+app.get('/api/v1/scrape/https/:search', function(req, res){
+    var url='https://'+ req.params.search;
+    request(url).pipe(res);
+});
+
 
 app.listen(7777, function(){
     console.log('listening on port 7777');
